@@ -98,10 +98,9 @@ end
 
   def show
     @campaign = Campaign.find(params[:id])
-    respond_to do |format|
-      format.html
-      format.json { render json: campaign_to_json(@campaign) }
-    end
+
+    render json: campaign_to_json(@campaign)
+
   end
 
 
