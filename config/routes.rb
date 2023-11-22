@@ -28,8 +28,6 @@ Rails.application.routes.draw do
       post '/images', to: 'images#create'
 
       resources :users
-
-
     end
   end
 
