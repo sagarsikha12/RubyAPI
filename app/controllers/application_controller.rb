@@ -3,9 +3,6 @@ class ApplicationController < ActionController::API
     # app/controllers/application_controller.rb
 
 
-
-    skip_before_action :verify_authenticity_token
-
 def unread_notifications_count
   user_signed_in? ? current_user.notifications.unread.count : 0
 end

@@ -3,7 +3,7 @@ module Api
   module V1
     class ImagesController < ApplicationController
   before_action :authenticate_jwt!, only: [:create, :update, :destroy]
-  skip_before_action :verify_authenticity_token
+
   def create
     image = ActiveStorage::Blob.create_and_upload!(io: image_params[:file], filename: image_params[:file].original_filename)
 

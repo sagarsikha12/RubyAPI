@@ -3,7 +3,7 @@ include ActionView::Helpers::SanitizeHelper
 class Api::V1::CampaignsController < ApplicationController
   before_action :authenticate_jwt!, only: [:create, :update, :destroy]
   before_action :find_campaign, only: [:show, :edit, :update, :destroy]
-  skip_before_action :verify_authenticity_token
+
 
   def index
     @campaigns = Campaign.where(approved: 1)
