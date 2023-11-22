@@ -3,7 +3,7 @@ class ApplicationController < ActionController::API
     # app/controllers/application_controller.rb
 
 
-    helper_method :unread_notifications_count
+
     skip_before_action :verify_authenticity_token
 
 def unread_notifications_count
