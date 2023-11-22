@@ -1,7 +1,7 @@
-class ApplicationController < ActionController::Base
+class ApplicationController < ActionController::API
     include Pagy::Backend
     # app/controllers/application_controller.rb
-    protect_from_forgery with: :exception
+
 
     helper_method :unread_notifications_count
     skip_before_action :verify_authenticity_token
