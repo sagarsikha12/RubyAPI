@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
     protect_from_forgery with: :exception
 
     helper_method :unread_notifications_count
+    skip_before_action :verify_authenticity_token
 
 def unread_notifications_count
   user_signed_in? ? current_user.notifications.unread.count : 0

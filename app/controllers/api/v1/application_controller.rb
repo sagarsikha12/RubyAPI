@@ -3,6 +3,7 @@ module Api
     class ApplicationController < ActionController::API
       JWT_SECRET = Rails.application.credentials.jwt_secret || 'fallback_secret'
       JWT_ALGORITHM = 'HS256'
+      skip_before_action :verify_authenticity_token
 
       # You no longer need the "before_action :authenticate_user_from_token!" here,
       # since you're doing the decoding directly in the UsersController#current action.
