@@ -6,6 +6,7 @@ ruby "3.2.2"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.8"
 
+gem 'dotenv-rails', groups: [:development, :test]
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
@@ -41,6 +42,7 @@ gem "image_processing", "~> 1.2"
 gem "active_model_serializers"
 gem "rack-cors"
 gem "pagy", "~> 6.1"
+gem 'sendgrid-ruby'
 
 
 

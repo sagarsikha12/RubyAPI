@@ -22,8 +22,18 @@ Rails.application.routes.draw do
       resources :notifications, only: [:index, :update,:delete,:destroy]
       delete 'notifications', to:'notifications#destroy'
 
+        # Devise routes under api/v1
+        devise_for :users, controllers: {
+          registrations: 'api/v1/users/registrations',
+          sessions: 'api/v1/users/sessions',
+          passwords: 'api/v1/users/passwords'
+        }
       devise_scope :user do
         post 'register', to: 'users/registrations#create'
+        post 'passwords', to: 'users/passwords#create'    # For sending reset password instructions
+        get 'passwords/edit', to: 'users/passwords#edit'  # For rendering the reset password form (might be handled by the frontend)
+        put 'passwords', to: 'users/passwords#update'     # For submitting the new password
+
       end
       post '/images', to: 'images#create'
 
@@ -61,8 +71,8 @@ end
 
   devise_for :users, controllers: {
     registrations: 'users/registrations',
-    sessions: 'users/sessions'
-
+    sessions: 'users/sessions',
+    passwords: 'users/passwords'
   }
   get '/api/user_signed_in', to: 'application#user_signed_in'
 

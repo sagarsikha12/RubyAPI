@@ -1,4 +1,6 @@
+#/mailers/application_mailer.rb
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
-  layout "mailer"
+  default from: "awareshare2023@gmail.com"
+
+  layout 'text_mailer', only: [:text]
 end

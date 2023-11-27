@@ -1,7 +1,11 @@
 # frozen_string_literal: true
+#/app/contorllers/api/v1/users/passwords_controller.rb
 
-class Users::PasswordsController < Devise::PasswordsController
   # GET /resource/password/new
+  class Api::V1::Users::PasswordsController < Devise::PasswordsController
+    # ... existing methods ...
+
+
   def new
     super
   end

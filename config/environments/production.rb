@@ -1,7 +1,22 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.sendgrid.net',
+    port: 587,
+    user_name: 'apikey',
+     password:  ENV['SENDGRID_API_KEY'],
+   # password:'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',
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
+
+
   # Settings specified here will take precedence over those in config/application.rb.
+
 
   # Code is not reloaded between requests.
   config.cache_classes = true
