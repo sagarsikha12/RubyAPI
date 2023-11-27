@@ -32,6 +32,8 @@ class Api::V1::CampaignsController < ApplicationController
 
           if campaign.cover_image.attached?
             campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
+          elsif campaign.cover_image_url.present?
+            campaign_data[:cover_image_url] = campaign.cover_image_url
           end
           if campaign.images.attached?
             campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
@@ -62,8 +64,6 @@ class Api::V1::CampaignsController < ApplicationController
         )
       end
 
-
-
       render json: { message: 'Campaign created successfully. Waiting for Admin Approval', campaign: campaign_to_json(@campaign) }, status: :created
     else
       render json: { errors: @campaign.errors.full_messages }, status: :unprocessable_entity
@@ -92,6 +92,8 @@ class Api::V1::CampaignsController < ApplicationController
 
       if campaign.cover_image.attached?
         campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
+      elsif campaign.cover_image_url.present?
+        campaign_data[:cover_image_url] = campaign.cover_image_url
       end
       if campaign.images.attached?
         campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
@@ -130,12 +132,14 @@ class Api::V1::CampaignsController < ApplicationController
   private
 
 
-    # def campaign_params
-    #   params.require(:campaign).permit(:title, :cover_image, :content, :category_id)
-    # end
+
+  # def campaign_params
+  #   params.permit(:title,:cover_image, :content, :category_id,images: [])
+  # end
   def campaign_params
-    params.permit(:title,:cover_image, :content, :category_id,images: [])
+    params.permit(:title, :cover_image, :content, :category_id, :cover_image_url, images: [])
   end
+
 
 
   def find_campaign
@@ -150,11 +154,13 @@ class Api::V1::CampaignsController < ApplicationController
     }
     if campaign.cover_image.attached?
       campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
+    elsif campaign.cover_image_url.present?
+      campaign_data[:cover_image_url] = campaign.cover_image_url
     end
     # Check if any images are attached and include them
-  if campaign.images.attached?
-    campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
-  end
+    if campaign.images.attached?
+      campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
+    end
 
     campaign_data
   end

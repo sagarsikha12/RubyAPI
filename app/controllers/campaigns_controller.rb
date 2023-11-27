@@ -17,8 +17,13 @@ class CampaignsController < ApplicationController
 
       if campaign.cover_image.attached?
         campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
+      elsif campaign.cover_image_url.present?
+        campaign_data[:cover_image_url] = campaign.cover_image_url
       end
-
+      # Check if any images are attached and include them
+      if campaign.images.attached?
+        campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
+      end
       campaign_data
     end
     respond_to do |format|
@@ -26,69 +31,11 @@ class CampaignsController < ApplicationController
       format.json { render json: campaigns_json }
     end
   end
-  def index
-    render json: { message: "Hello, World!" }
-  end
-
-
-
-
-  def new
-    @campaign = Campaign.new
-  end
-
-  # In your controller action
-# In your controller action
-def create
-  # Create the campaign
-  @campaign = current_user.campaigns.build(campaign_params)
-
-  if @campaign.save
-    # Create notifications for all users who should receive it
-    User.all.each do |user|
-      Notification.create(
-        user: user,
-        campaign: @campaign,
-        status: "unread"
-      )
-    end
-
-
-
-    redirect_to @campaign, notice: 'Campaign created successfully.'
-  else
-    render :new
-  end
-end
-
-
-
-  def edit
-  end
-
-  def update
-    if @campaign.update(campaign_params)
-
-      redirect_to my_campaigns_campaigns_path, notice: 'Campaign updated successfully.'
-    else
-      render :edit
-    end
-  end
-
-  def destroy
-    @campaign = current_user.campaigns.find(params[:id])
-    if @campaign.destroy
-      redirect_to my_campaigns_campaigns_path, notice: 'Campaign deleted successfully.'
-    else
-      redirect_to my_campaigns_campaigns_path, alert: 'Error deleting campaign.'
-    end
-  end
-
 
 
 
   def campaign_params
-    params.require(:campaign).permit(:title, :cover_image, :content, :category_id)
+    params.require(:campaign).permit(:title, :cover_image,:cover_image_url, :content, :category_id,images: [])
   end
 
   def find_campaign
@@ -115,19 +62,19 @@ def campaign_to_json(campaign)
     created_at: campaign.created_at.strftime('%Y-%m-%d %H:%M:%S')
   }
 
+
   if campaign.cover_image.attached?
     campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
+  elsif campaign.cover_image_url.present?
+    campaign_data[:cover_image_url] = campaign.cover_image_url
+  end
+  # Check if any images are attached and include them
+  if campaign.images.attached?
+    campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
   end
 
   campaign_data
 end
-
-
-
-
-
-
-
 
 
 
