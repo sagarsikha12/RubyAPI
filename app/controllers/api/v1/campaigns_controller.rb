@@ -72,6 +72,9 @@ class Api::V1::CampaignsController < ApplicationController
     @campaign = Campaign.find(params[:id])
 
     if @campaign.destroy
+      if @campaign.notification
+        @campaign.notification.destroy
+      end
       render json: { message: 'Campaign deleted successfully' }, status: :no_content
     else
       render json: { errors: @campaign.errors.full_messages }, status: :unprocessable_entity
