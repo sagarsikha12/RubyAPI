@@ -6,14 +6,42 @@ module Api
 
       def index
         user_id = decode_token[0]['user_id'] # Get user_id from the decoded token
-        @notifications = Notification.where(user_id: user_id, status: [:unread, :unapproved])
+        status = params[:status] || [:unread, :unapproved]
+
+        # Check if 'status' parameter is set to 'All'
+        if status == 'All'
+          @notifications = Notification.where(user_id: user_id)
+        else
+          @notifications = Notification.where(user_id: user_id, status: status)
+        end
+
         render json: @notifications
       end
 
+
       def destroy
         user_id = decode_token[0]['user_id'] # Get user_id from the decoded token
-        @notifications = Notification.where(user_id: user_id, status: [:unread, :approved]).delete_all
-        render json: { success: true }
+        if params[:id]
+          # Delete the notification with the specified id
+          @notification = Notification.find_by(id: params[:id], user_id: user_id)
+          if @notification
+            @notification.destroy
+            render json: { success: true, message: 'Notification deleted successfully' }
+          else
+            render json: { success: false, message: 'Notification not found' }, status: :not_found
+          end
+        else
+          # Delete notifications based on user_id and status
+          @notifications = Notification.where(user_id: user_id, status: [:unread, :approved]).delete_all
+          render json: { success: true, message: 'Notifications deleted successfully' }
+        end
+      end
+
+
+      def clearall
+        user_id = decode_token[0]['user_id'] # Get user_id from the decoded token
+        @notifications = Notification.where(user_id: user_id, status: :unapproved).delete_all
+        render json:{success:true }
       end
 
       def update

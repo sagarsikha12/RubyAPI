@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
 
+      delete 'notificaitons/clearall', to:'notifications#clearall'
       get 'campaigns/listall', to: 'campaigns#listall'
       get 'check-session', to: 'sessions#check_session'
       # config/routes.rb
