@@ -6,9 +6,45 @@ class Api::V1::CampaignsController < ApplicationController
 
 
   def index
+
     @campaigns = Campaign.where(approved: 1)
     campaigns_json = @campaigns.map { |campaign| campaign_to_json(campaign) }
     render json: campaigns_json
+  end
+
+  def listall
+    decoded_data = decode_token
+    if decoded_data.present?
+      user_id = decoded_data[0]['user_id']
+      puts "Current User: #{@current_user}"
+      @current_user = User.find_by(id: user_id)
+      if @current_user.admin
+        @campaigns = Campaign.all
+        campaigns_json = @campaigns.map do |campaign|
+          campaign_data = {
+            id: campaign.id,
+            title: campaign.title,
+            content: strip_tags(campaign.content.body.to_html),
+            created_at: campaign.created_at.iso8601,
+            approved:campaign.approved
+
+          }
+
+          if campaign.cover_image.attached?
+            campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
+          end
+          if campaign.images.attached?
+            campaign_data[:images] = campaign.images.map { |image| rails_blob_url(image) }
+          else
+            campaign_data[:images] = []
+          end
+
+          campaign_data
+        end
+
+        render json: campaigns_json
+      end
+    end
   end
 
 

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
 
+      get 'campaigns/listall', to: 'campaigns#listall'
       get 'check-session', to: 'sessions#check_session'
       # config/routes.rb
       get '/csrf_token', to: 'sessions#csrf_token'
@@ -16,6 +17,12 @@ Rails.application.routes.draw do
       get 'mycampaign', to: 'campaigns#my_campaigns'
       post 'mycampaign', to: 'campaigns#my_campaigns'
 
+      resources :users, only: [:index, :destroy] do
+        member do
+          delete :destroy
+          patch :make_admin
+        end
+      end
       resources :campaigns, only: [:index,:update,:create]
       resources :categories, only: [:index, :show, :create, :update, :destroy]
 
