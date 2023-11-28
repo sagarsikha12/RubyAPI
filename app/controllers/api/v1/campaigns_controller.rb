@@ -29,7 +29,6 @@ class Api::V1::CampaignsController < ApplicationController
             approved:campaign.approved
 
           }
-
           if campaign.cover_image.attached?
             campaign_data[:cover_image_url] = rails_blob_url(campaign.cover_image)
           elsif campaign.cover_image_url.present?
