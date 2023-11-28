@@ -120,12 +120,26 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def update
+    # Check if cover_image is being updated
+    if params[:cover_image].present?
+      @campaign.cover_image.purge if @campaign.cover_image.attached?
+      @campaign.update(cover_image: params[:cover_image])
+    end
+
+    # Check if cover_image_url is being updated and is different from the current one
+    if params[:cover_image_url].present? && params[:cover_image_url] != @campaign.cover_image_url
+      @campaign.cover_image.purge if @campaign.cover_image.attached?
+      @campaign.update(cover_image_url: params[:cover_image_url])
+    end
+
+    # Update other attributes
     if @campaign.update(campaign_params)
       render json: { message: 'Campaign updated successfully.', campaign: campaign_to_json(@campaign) }, status: :ok
     else
       render json: { errors: @campaign.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
 
 
 
@@ -139,6 +153,8 @@ class Api::V1::CampaignsController < ApplicationController
   def campaign_params
     params.permit(:title, :cover_image, :content, :category_id, :cover_image_url, images: [])
   end
+
+
 
 
 
