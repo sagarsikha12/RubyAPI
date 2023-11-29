@@ -43,6 +43,58 @@ module Api
         end
       end
 
+      def profile_detail
+
+        decoded_data = decode_token
+
+        if decoded_data.present?
+          user_id = decoded_data[0]['user_id']
+          user = User.find_by(id: user_id)
+
+          if user.nil?
+            render json: { errors: ['User not found'] }, status: :not_found
+          else
+
+            user_details =
+              {
+                first_name: user.first_name,
+                last_name: user.last_name,
+                username: user.username,
+                email: user.email
+              }
+
+
+            render json: user_details, status: :ok
+          end
+        end
+      end
+
+      def update_profile
+        decoded_data = decode_token
+
+        if decoded_data.present?
+          user_id = decoded_data[0]['user_id']
+          user = User.find_by(id: user_id)
+
+          if user.nil?
+            render json: { errors: ['User not found'] }, status: :not_found
+          else
+            # Parse the JSON data from the request body
+            updated_data = JSON.parse(request.body.read)
+
+            # Update the user attributes
+            if user.update(updated_data['user'])
+              render json: { message: 'Profile updated successfully' }, status: :ok
+            else
+              render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+            end
+          end
+        else
+          render json: { errors: ['Not Authorized'] }, status: :unprocessable_entity
+        end
+      end
+
+
       def update_password
         decoded_data = decode_token
         if decoded_data.present?

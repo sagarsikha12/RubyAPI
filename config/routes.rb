@@ -11,6 +11,8 @@ Rails.application.routes.draw do
       # config/routes.rb
       get 'users/current', to: 'users#current'
       post '/change-password', to: 'users#update_password'
+      put '/update_profile', to:'users#update_profile'
+      get '/profile_detail', to: 'users#profile_detail'
 
       delete 'logout', to: 'sessions#destroy'
 
