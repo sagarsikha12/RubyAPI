@@ -43,6 +43,27 @@ module Api
         end
       end
 
+      def update_password
+        decoded_data = decode_token
+        if decoded_data.present?
+          user_id = decoded_data[0]['user_id']
+          user =User.find_by(id: user_id)
+
+          if user.valid_password?(params[:current_password])
+            if user.update(password: params[:new_password])
+              render json: { message: 'Password updated successfully' }, status: :ok
+            else
+              render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+            end
+          else
+            render json: { errors: ['Current password is incorrect'] }, status: 401
+          end
+        else
+          render json: { errors: ['Not Authorized'] }, status: :unprocessable_entity
+        end
+      end
+
+
       # Method to make a user admin by ID
       def make_admin
         user = User.find_by(id: params[:id])

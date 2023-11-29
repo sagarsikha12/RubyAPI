@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
       # config/routes.rb
       get 'users/current', to: 'users#current'
+      post '/change-password', to: 'users#update_password'
 
       delete 'logout', to: 'sessions#destroy'
 
