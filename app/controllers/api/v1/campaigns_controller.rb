@@ -119,25 +119,46 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def update
-    # Check if cover_image is being updated
-    if params[:cover_image].present?
-      @campaign.cover_image.purge if @campaign.cover_image.attached?
-      @campaign.update(cover_image: params[:cover_image])
+    # Decode the token to get user information
+    decoded_data = decode_token
+
+    # Check if decoded data is present and valid
+    if decoded_data.blank?
+      return render json: { error: 'You are not authorized to perform this action' }, status: 401
     end
 
-    # Check if cover_image_url is being updated and is different from the current one
-    if params[:cover_image_url].present? && params[:cover_image_url] != @campaign.cover_image_url
-      @campaign.cover_image.purge if @campaign.cover_image.attached?
-      @campaign.update(cover_image_url: params[:cover_image_url])
+    user = User.find_by(id: decoded_data[0]['user_id'])
+
+    # Check if the user is authorized (either admin or the author of the campaign)
+    unless user&.admin? || user&.id == @campaign.user_id
+      return render json: { error: 'You are not authorized to perform this action' }, status: 401
     end
 
-    # Update other attributes
-    if @campaign.update(campaign_params)
-      render json: { message: 'Campaign updated successfully.', campaign: campaign_to_json(@campaign) }, status: :ok
-    else
-      render json: { errors: @campaign.errors.full_messages }, status: :unprocessable_entity
+    # Begin updating the campaign
+    ActiveRecord::Base.transaction do
+      # Check if cover_image is being updated
+      if params[:cover_image].present?
+        @campaign.cover_image.purge if @campaign.cover_image.attached?
+        @campaign.cover_image.attach(params[:cover_image])
+      end
+
+      # Check if cover_image_url is being updated and is different from the current one
+      if params[:cover_image_url].present? && params[:cover_image_url] != @campaign.cover_image_url
+        @campaign.cover_image.purge if @campaign.cover_image.attached?
+        @campaign.cover_image_url = params[:cover_image_url]
+      end
+
+      # Save the changes
+      if @campaign.save
+        render json: { message: 'Campaign updated successfully.', campaign: campaign_to_json(@campaign) }, status: :ok
+      else
+        raise ActiveRecord::RecordInvalid, @campaign
+      end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
   end
+
 
 
 
