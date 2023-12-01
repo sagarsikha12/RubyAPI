@@ -106,17 +106,34 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def destroy
+    # Decode the token to get user information
+    decoded_data = decode_token
+
+    # Check if decoded data is present and valid
+    if decoded_data.blank?
+      return render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
+    end
+
+    user = User.find_by(id: decoded_data[0]['user_id'])
+
+    # Check if the user is authorized (either admin or the author of the campaign)
+    unless user&.admin? || user&.id == @campaign.user_id
+      return render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
+    end
+
+    # Proceed to delete the campaign
     @campaign = Campaign.find(params[:id])
 
     if @campaign.destroy
-      if @campaign.notification
-        @campaign.notification.destroy
-      end
+      # Additional action: delete associated notification if it exists
+      @campaign.notification&.destroy
+
       render json: { message: 'Campaign deleted successfully' }, status: :no_content
     else
       render json: { errors: @campaign.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
 
   def update
     # Decode the token to get user information
