@@ -16,7 +16,7 @@
 # end
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins '*'# Adjust this to your React frontend's domain/port
+    origins 'https://sitecampaign.vercel.app'# Adjust this to your React frontend's domain/port
 
     resource '*',
       headers: :any,
