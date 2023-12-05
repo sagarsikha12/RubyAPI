@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       post '/change-password', to: 'users#update_password'
       put '/update_profile', to:'users#update_profile'
       patch '/delete_admin/:id', to: 'users#delete_admin'
+      get'is-admin', to:'users#is_admin'
 
       get '/profile_detail', to: 'users#profile_detail'
 

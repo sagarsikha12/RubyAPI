@@ -20,6 +20,23 @@ module Api
         end
 
       end
+      def is_admin
+        decoded_data = decode_token
+        if decoded_data.present?
+        # Check if the current user is an admin
+          user_id = decoded_data[0]['user_id']
+
+          @current_user = User.find_by(id: user_id)
+          if @current_user.admin == true # Assuming the 'admin' column is a boolean
+          # Return all user details in JSON format
+
+            render json: { admin: true, message: "You are an admin"}
+          else
+            render json: { admin: false, message: "You are not admin" }
+          end
+        end
+
+      end
       # Method to delete a user by ID
       def destroy
         user = User.find_by(id: params[:id])
