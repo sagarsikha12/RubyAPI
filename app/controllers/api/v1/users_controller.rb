@@ -194,7 +194,7 @@ module Api
           user_id = decoded_data[0]['user_id']
           @user = User.find_by(id: user_id)
           if @user
-            render json: { success: true, user: { email: @user.email, admin:@user.admin} }
+            render json: { success: true, user: { email: @user.email, admin:@user.admin, id: @user.id} }
           else
             render json: { success: false, message: "User not found" }, status: :not_found
           end

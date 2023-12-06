@@ -11,7 +11,8 @@ class CampaignsController < ApplicationController
       campaign_data = {
         id: campaign.id,
         title: campaign.title,
-        content: campaign.content.body.to_html
+        content: campaign.content.body.to_html,
+        ownerId:campaign.user_id
 
       }
       if campaign.cover_image.attached?
@@ -58,7 +59,8 @@ def campaign_to_json(campaign)
     id: campaign.id,
     title: campaign.title,
     content: campaign.content.body.to_html,
-    created_at: campaign.created_at.strftime('%Y-%m-%d %H:%M:%S')
+    created_at: campaign.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+    ownerId: campaign.user_id
   }
 
 
