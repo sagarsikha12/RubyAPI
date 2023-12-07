@@ -153,6 +153,11 @@ class Api::V1::CampaignsController < ApplicationController
 
     # Begin updating the campaign
     ActiveRecord::Base.transaction do
+       # Update title if provided
+       @campaign.title = params[:title] if params[:title].present?
+
+       # Update content if provided
+       @campaign.content = params[:content] if params[:content].present?
       # Check if cover_image is being updated
       if params[:cover_image].present?
         @campaign.cover_image.purge if @campaign.cover_image.attached?
